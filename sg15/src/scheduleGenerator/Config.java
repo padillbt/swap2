@@ -699,7 +699,7 @@ public class Config extends javax.swing.JFrame {
             if(this.firstSelection) {
                 stretch();
             }
-            this.models[dayNum] = new DefaultListModel<Object>();
+            this.models[dayNum] = new DefaultListModel();
             jobList.setModel(this.models[dayNum]);
             scrollPane.setViewportView(jobList);
 

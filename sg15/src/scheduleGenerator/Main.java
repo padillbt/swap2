@@ -9,6 +9,16 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+/*
+ * Bugs existant in code from Swap 1:
+ * 
+ * Edit Workers throws an error when attempted.
+ * Negative numbers can be added into text field for additional feature that schedules a person only a certain number of times
+ * 
+ */
+
+
+
 /**
  * This class handles the interaction of one frame to another as well as
  * handling initialization.
