@@ -7,15 +7,39 @@ package scheduleGenerator;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 /**
  *
  * @author schneimd
  */
+
+
+
+/* SWAP 2, TEAM 6
+* 
+* REFACTOR
+* SMELL: Large Class
+* 
+* Removed all the duplication of methods mentioned that was causing the class to be so large.  Furthermore, all of the fields
+* were updated into just a few HashMaps containing values by keys determined by each day's name.  Removal of such unneeded
+* duplication has made the class much smaller than it was before.
+* 
+* 
+*/
+
+
 //SMELL: Large Class - Config is much larger than other classes in the project,
 // mostly due to massive amounts of code duplication. There are also an enormous
 // number of fields at the bottom of the class.
@@ -38,6 +62,40 @@ public class Config extends javax.swing.JFrame {
 	private DefaultListModel[] models;
     
     
+    // SWAP 2, TEAM 6
+    private HashMap<String, JCheckBox> daysChecked = new HashMap<String, JCheckBox>();
+	private HashMap<String, JList> daysList = new HashMap<String, JList>();
+	private HashMap<String, JScrollPane> daysScrollPane = new HashMap<String, JScrollPane>();
+	private HashMap<String, JTextField> daysTextField = new HashMap<String, JTextField>();
+	private HashMap<String, JButton> daysAdd = new HashMap<String, JButton>();
+	private HashMap<String, JButton> daysDelete = new HashMap<String, JButton>();
+	private HashMap<String, JLabel> daysLabel = new HashMap<String, JLabel>();
+	private HashMap<String, JPanel> daysPanelTab = new HashMap<String, JPanel>();
+
+	private String[] daysOfWeek = { "Sunday", "Monday", "Tuesday", "Wednesday",
+			"Thursday", "Friday", "Saturday" };
+    
+	public int getDayNum(String dayName) {
+
+		int dayNum = 0;
+		if (dayName.equals("Sunday")) {
+			dayNum = 0;
+		} else if (dayName.equals("Monday")) {
+			dayNum = 1;
+		} else if (dayName.equals("Tuesday")) {
+			dayNum = 2;
+		} else if (dayName.equals("Wednesday")) {
+			dayNum = 3;
+		} else if (dayName.equals("Thursday")) {
+			dayNum = 4;
+		} else if (dayName.equals("Friday")) {
+			dayNum = 5;
+		} else if (dayName.equals("Saturday")) {
+			dayNum = 6;
+		}
+		return dayNum;
+	}
+    
     /**
      * Used to edit days.
      *
@@ -50,60 +108,31 @@ public class Config extends javax.swing.JFrame {
         initDyn();
         initComponents();
         
+     /* SWAP 2, TEAM 6
+   	 * 
+   	 * REFACTOR
+   	 * SMELL: Switch Statements
+   	 * 
+   	 * Removed all the duplications in the switch statement based on days mentioned below into a for loop so that 
+   	 * changes only need to be made once.  This was done using the new updated HashMaping days to values
+   	 * and extracting out all similarities based on day names.  Now a simple for loop can handle all the days
+   	 * the same way, just by knowing the name of the day.
+   	 * 
+   	 * 
+   	 */
+        
         //SMELL: Switch Statements - the code in this if statement could be extracted
         // to make it cleaner and easier to modify.
-    	for(Day day: days) {
-    		if(day.getNameOfDay().equals("Sunday")) {
-    			this.sundayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[0].addElement(job);
-    				this.sundayJobList.setModel(this.models[0]);
-    			}
-    		} else if(day.getNameOfDay().equals("Monday")) {
-    			this.mondayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[1].addElement(job);
-    				this.sundayJobList.setModel(this.models[1]);
-    			}
-    		} else if(day.getNameOfDay().equals("Tuesday")) {
-    			this.tuesdayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[2].addElement(job);
-    				this.sundayJobList.setModel(this.models[2]);
-    			}
-    		} else if(day.getNameOfDay().equals("Wednesday")) {
-    			this.wednesdayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[3].addElement(job);
-    				this.sundayJobList.setModel(this.models[3]);
-    			}
-    		} else if(day.getNameOfDay().equals("Thursday")) {
-    			this.thursdayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[4].addElement(job);
-    				this.sundayJobList.setModel(this.models[4]);
-    			}
-    		} else if(day.getNameOfDay().equals("Friday")) {
-    			this.fridayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[5].addElement(job);
-    				this.sundayJobList.setModel(this.models[5]);
-    			}
-    		} else if(day.getNameOfDay().equals("Saturday")) {
-    			this.saturdayCheck.doClick();
-    			ArrayList<String> jobs = day.getJobs();
-    			for(String job: jobs) {
-    				this.models[6].addElement(job);
-    				this.sundayJobList.setModel(this.models[6]);
-    			}
-    		}
-    	}
+    	
+        for (Day day : days) {
+			ArrayList<String> jobs = day.getJobs();
+			this.daysChecked.get(day.getNameOfDay()).doClick();
+			for (String job : jobs) {
+				this.models[this.getDayNum(day.getNameOfDay())].addElement(job);
+				this.daysList.get(day.getNameOfDay()).setModel(
+						this.models[this.getDayNum(day.getNameOfDay())]);
+			}
+		}
     }
     
     /**
@@ -117,83 +146,28 @@ public class Config extends javax.swing.JFrame {
     }
     
     @SuppressWarnings("rawtypes")
-	private void initDyn() {
-        this.sundayScrollPane = new javax.swing.JScrollPane();
-        this.sundayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.sundayJobList = new javax.swing.JList();
-        this.sundayJobName = new javax.swing.JTextField();
-        this.sundayLabel = new javax.swing.JLabel();
-        this.sundayAddJob = new javax.swing.JButton();
-        this.sundayDeleteJob = new javax.swing.JButton();
-        
-        this.mondayScrollPane = new javax.swing.JScrollPane();
-        this.mondayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.mondayJobList = new javax.swing.JList();
-        this.mondayJobName = new javax.swing.JTextField();
-        this.mondayLabel = new javax.swing.JLabel();
-        this.mondayAddJob = new javax.swing.JButton();
-        this.mondayDeleteJob = new javax.swing.JButton();
-        
-        this.tuesdayScrollPane = new javax.swing.JScrollPane();
-        this.tuesdayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.tuesdayJobList = new javax.swing.JList();
-        this.tuesdayJobName = new javax.swing.JTextField();
-        this.tuesdayLabel = new javax.swing.JLabel();
-        this.tuesdayAddJob = new javax.swing.JButton();
-        this.tuesdayDeleteJob = new javax.swing.JButton();
-        
-        this.wednesdayScrollPane = new javax.swing.JScrollPane();
-        this.wednesdayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.wednesdayJobList = new javax.swing.JList();
-        this.wednesdayJobName = new javax.swing.JTextField();
-        this.wednesdayLabel = new javax.swing.JLabel();
-        this.wednesdayAddJob = new javax.swing.JButton();
-        this.wednesdayDeleteJob = new javax.swing.JButton();
-        
-        this.thursdayScrollPane = new javax.swing.JScrollPane();
-        this.thursdayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.thursdayJobList = new javax.swing.JList();
-        this.thursdayJobName = new javax.swing.JTextField();
-        this.thursdayLabel = new javax.swing.JLabel();
-        this.thursdayAddJob = new javax.swing.JButton();
-        this.thursdayDeleteJob = new javax.swing.JButton();
-        
-        this.fridayScrollPane = new javax.swing.JScrollPane();
-        this.fridayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.fridayJobList = new javax.swing.JList();
-        this.fridayJobName = new javax.swing.JTextField();
-        this.fridayLabel = new javax.swing.JLabel();
-        this.fridayAddJob = new javax.swing.JButton();
-        this.fridayDeleteJob = new javax.swing.JButton();
-        
-        this.saturdayScrollPane = new javax.swing.JScrollPane();
-        this.saturdayScrollPane.setPreferredSize(new Dimension(185,150));
-        this.saturdayJobList = new javax.swing.JList();
-        this.saturdayJobName = new javax.swing.JTextField();
-        this.saturdayLabel = new javax.swing.JLabel();
-        this.saturdayAddJob = new javax.swing.JButton();
-        this.saturdayDeleteJob = new javax.swing.JButton();
-        
-        this.mondayTab = new javax.swing.JPanel();
-        this.tuesdayTab = new javax.swing.JPanel();
-        this.wednesdayTab = new javax.swing.JPanel();
-        this.thursdayTab = new javax.swing.JPanel();
-        this.fridayTab = new javax.swing.JPanel();
-        this.saturdayTab = new javax.swing.JPanel();
-        this.sundayTab = new javax.swing.JPanel();
-    }
+    private void initDyn() {
+
+		for (String day : daysOfWeek) {
+
+			this.daysAdd.put(day, new JButton());
+			this.daysDelete.put(day, new JButton());
+			this.daysScrollPane.put(day, new JScrollPane());
+			this.daysScrollPane.get(day).setPreferredSize(
+					new Dimension(185, 150));
+			this.daysList.put(day, new JList());
+			this.daysLabel.put(day, new JLabel());
+			this.daysTextField.put(day, new JTextField());
+			this.daysChecked.put(day, new JCheckBox());
+			this.daysPanelTab.put(day, new JPanel());
+		}
+
+	}
 
     private void initComponents() {
 
     	this.jPanel1 = new javax.swing.JPanel();
-        this.sundayCheck = new javax.swing.JCheckBox();
-        this.wednesdayCheck = new javax.swing.JCheckBox();
-        this.mondayCheck = new javax.swing.JCheckBox();
-        this.tuesdayCheck = new javax.swing.JCheckBox();
         this.jLabel1 = new javax.swing.JLabel();
-        this.thursdayCheck = new javax.swing.JCheckBox();
-        this.fridayCheck = new javax.swing.JCheckBox();
-        this.saturdayCheck = new javax.swing.JCheckBox();
         this.nextButton = new javax.swing.JButton();
         this.dayTabs = new javax.swing.JTabbedPane();
         
@@ -217,71 +191,17 @@ public class Config extends javax.swing.JFrame {
         	}
         });
         
-        this.sundayCheck.setText("Sunday");
-        this.sundayCheck.setName("sundayCheck"); // NOI18N
-        this.sundayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sundayCheckActionPerformed(evt);
-            }
-        });
-
-        this.wednesdayCheck.setText("Wednesday");
-        this.wednesdayCheck.setName("wednesdayCheck"); // NOI18N
-        this.wednesdayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wednesdayCheckActionPerformed(evt);
-            }
-        });
-
-        this.mondayCheck.setText("Monday");
-        this.mondayCheck.setName("mondayCheck"); // NOI18N
-        this.mondayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mondayCheckActionPerformed(evt);
-            }
-        });
-
-        this.tuesdayCheck.setText("Tuesday");
-        this.tuesdayCheck.setName("tuesdayCheck"); // NOI18N
-        this.tuesdayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tuesdayCheckActionPerformed(evt);
-            }
-        });
+        for (String dayName : this.daysOfWeek){
+        	this.daysChecked.get(dayName).setText(dayName);
+        	this.daysChecked.get(dayName).setName(dayName.toLowerCase()+"Check");
+        	this.daysChecked.get(dayName).addActionListener(new DayListener(this, dayName));
+        }
+        
+       
 
         this.jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         this.jLabel1.setText("Days:");
 
-        this.thursdayCheck.setText("Thursday");
-        this.thursdayCheck.setName("thursdayCheck"); // NOI18N
-        this.thursdayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                thursdayCheckActionPerformed(evt);
-            }
-        });
-
-        this.fridayCheck.setText("Friday");
-        this.fridayCheck.setName("fridayCheck"); // NOI18N
-        this.fridayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fridayCheckActionPerformed(evt);
-            }
-        });
-
-        this.saturdayCheck.setText("Saturday");
-        this.saturdayCheck.setName("saturdayCheck"); // NOI18N
-        this.saturdayCheck.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saturdayCheckActionPerformed(evt);
-            }
-        });
 
         this.nextButton.setText("Next");
         this.nextButton.addActionListener(new java.awt.event.ActionListener() {
@@ -302,19 +222,19 @@ public class Config extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(this.jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(this.sundayCheck)
+                .addComponent(this.daysChecked.get("Sunday"))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(this.mondayCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(this.daysChecked.get("Monday"), javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(this.tuesdayCheck)
+                .addComponent(this.daysChecked.get("Tuesday"))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(this.wednesdayCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(this.daysChecked.get("Wednesday"), javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(this.thursdayCheck)
+                .addComponent(this.daysChecked.get("Thursday"))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(this.fridayCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(this.daysChecked.get("Friday"), javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(this.saturdayCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(this.daysChecked.get("Saturday"), javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(this.nextButton)
                 .addGap(18, 18, 18)
@@ -326,18 +246,18 @@ public class Config extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(this.sundayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.daysChecked.get("Sunday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(this.fridayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(this.saturdayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                        .addComponent(this.daysChecked.get("Friday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(this.daysChecked.get("Saturday"), javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
                         .addComponent(this.nextButton).addComponent(this.repeatCheck))
-                    .addComponent(this.wednesdayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(this.tuesdayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.daysChecked.get("Wednesday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.daysChecked.get("Tuesday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(this.jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(this.thursdayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(this.mondayCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(this.daysChecked.get("Thursday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(this.daysChecked.get("Monday"), javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -364,311 +284,84 @@ public class Config extends javax.swing.JFrame {
     }// </editor-fold>
 
     
+    /* SWAP 2, TEAM 6
+	 * 
+	 * REFACTOR
+	 * SMELL: Duplicated code
+	 * 
+	 * Removed all the duplication mentioned below into a single dayCheckActionPerformed function so that 
+	 * changes only need to be made once.  This was done using the new updated HashMaping days to values
+	 * and extracting out all similarities based on day names.
+	 * 
+	 * Note: Had to add new Listener classes to allow for parameterization of fields and methods
+	 * to be called for each day, and so that functionality was clear
+	 * 
+	 * 
+	 */
+    
     /**
 	 * @param evt  
 	 */
-    //SMELL: Duplicated code - the code across the CheckActionPerformed methods
+    // SWAP 1, TEAM 5
+    // SMELL: Duplicated code - the code across the CheckActionPerformed methods
     // was extremely similar before refactoring.
-    @SuppressWarnings("unchecked")
-	private void sundayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        if(this.sundayCheck.isSelected()) {
-            this.sundayAddJob.setText("Add Job");
-            this.sundayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.sundayJobName.getText().isEmpty()) {
-                        Config.this.models[0].addElement(Config.this.sundayJobName.getText());
-                        Config.this.sundayJobList.setModel(Config.this.models[0]);
-                        Config.this.sundayJobName.setText("");
-                    }
-                }
-            });
+    
+    public void dayCheckActionPerformed(java.awt.event.ActionEvent evt, String dayName){
+    	if(this.daysChecked.get(dayName).isSelected()) {
+            this.daysAdd.get(dayName).setText("Add Job");
+            this.daysAdd.get(dayName).addActionListener(new AddListener(this, dayName));
 
-            this.sundayDeleteJob.setText("Delete Job");
-            this.sundayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.sundayJobList.isSelectionEmpty()) {
-                        int n = Config.this.sundayJobList.getSelectedIndex();
-                        Config.this.models[0].remove(n);
-                    }
-                    
-                }
-            });
-        }
-
-        // SWAP 1, TEAM 5
+            this.daysDelete.get(dayName).setText("Delete Job");
+            this.daysDelete.get(dayName).addActionListener(new DeleteListener(this, dayName));
+    	}
+    	
+    	/* SWAP 2, TEAM 6
+    	 * 
+    	 * Moved their code change into a more globally tolerant function usable by each of the days
+    	 * which is now able to be done thanks to the hash maps. Basically just a relocation of their refactoring into
+    	 * a method that handles all of the days the same.
+    	 * 
+    	 * 
+    	 */
+    	
+    	
+    	// SWAP 1, TEAM 5
         // QUALITY CHANGES
         // This method (sundayCheckActionPerformed) was very long, and so a large 
         // portion of the code was extracted into the checkActionPerformed method. 
         // As such, I've deleted the duplicated code and instead called the method
         // with the appropriate parameters. You can see above the actionlisteners,
         // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.sundayScrollPane, this.sundayAddJob, this.sundayDeleteJob, 
-        					 this.sundayJobList, this.sundayJobName, this.sundayLabel, this.sundayTab, 
-        					 this.sundayCheck, "Sunday", 0);
-    }                                           
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void mondayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        if(this.mondayCheck.isSelected()) {
-            this.mondayAddJob.setText("Add Job");
-            this.mondayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.mondayJobName.getText().isEmpty()) {
-                        Config.this.models[1].addElement(Config.this.mondayJobName.getText());
-                        Config.this.mondayJobList.setModel(Config.this.models[1]);
-                        Config.this.mondayJobName.setText("");
-                    }
-                }
-            });
-
-            this.mondayDeleteJob.setText("Delete Job");
-            this.mondayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.mondayJobList.isSelectionEmpty()) {
-                        int n = Config.this.mondayJobList.getSelectedIndex();
-                        Config.this.models[1].remove(n);
-                    }
-                    
-                }
-            });
-        }
-        
-        // SWAP 1, TEAM 5
-        // QUALITY CHANGES
-        // This method (mondayCheckActionPerformed) was very long, and so a large 
-        // portion of the code was extracted into the checkActionPerformed method. 
-        // As such, I've deleted the duplicated code and instead called the method
-        // with the appropriate parameters. You can see above the actionlisteners,
-        // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.mondayScrollPane, this.mondayAddJob, this.mondayDeleteJob, 
-        					 this.mondayJobList, this.mondayJobName, this.mondayLabel, this.mondayTab, 
-        					 this.mondayCheck, "Monday", 1);       
-    }                                           
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void tuesdayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        if(this.tuesdayCheck.isSelected()) {
-            this.tuesdayAddJob.setText("Add Job");
-            this.tuesdayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.tuesdayJobName.getText().isEmpty()) {
-                        Config.this.models[2].addElement(Config.this.tuesdayJobName.getText());
-                        Config.this.tuesdayJobList.setModel(Config.this.models[2]);
-                        Config.this.tuesdayJobName.setText("");
-                    }
-                }
-            });
-
-            this.tuesdayDeleteJob.setText("Delete Job");
-            this.tuesdayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.tuesdayJobList.isSelectionEmpty()) {
-                        int n = Config.this.tuesdayJobList.getSelectedIndex();
-                        Config.this.models[2].remove(n);
-                    }
-                    
-                }
-            });
-        }
-        
-        // SWAP 1, TEAM 5
-        // QUALITY CHANGES
-        // This method (tuesdayCheckActionPerformed) was very long, and so a large 
-        // portion of the code was extracted into the checkActionPerformed method. 
-        // As such, I've deleted the duplicated code and instead called the method
-        // with the appropriate parameters. You can see above the actionlisteners,
-        // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.tuesdayScrollPane, this.tuesdayAddJob, this.tuesdayDeleteJob, 
-        					 this.tuesdayJobList, this.tuesdayJobName, this.tuesdayLabel, this.tuesdayTab, 
-        					 this.tuesdayCheck, "Tuesday", 2);
-    }                                            
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void wednesdayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        if(this.wednesdayCheck.isSelected()) {
-            this.wednesdayAddJob.setText("Add Job");
-            this.wednesdayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.wednesdayJobName.getText().isEmpty()) {
-                        Config.this.models[3].addElement(Config.this.wednesdayJobName.getText());
-                        Config.this.wednesdayJobList.setModel(Config.this.models[3]);
-                        Config.this.wednesdayJobName.setText("");
-                    }
-                }
-            });
-
-            this.wednesdayDeleteJob.setText("Delete Job");
-            this.wednesdayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.wednesdayJobList.isSelectionEmpty()) {
-                        int n = Config.this.wednesdayJobList.getSelectedIndex();
-                        Config.this.models[3].remove(n);
-                    }
-                    
-                }
-            });
-        }
-        
-        // SWAP 1, TEAM 5
-        // QUALITY CHANGES
-        // This method (wednesdayCheckActionPerformed) was very long, and so a large 
-        // portion of the code was extracted into the checkActionPerformed method. 
-        // As such, I've deleted the duplicated code and instead called the method
-        // with the appropriate parameters. You can see above the actionlisteners,
-        // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.wednesdayScrollPane, this.wednesdayAddJob, this.wednesdayDeleteJob, 
-        					 this.wednesdayJobList, this.wednesdayJobName, this.wednesdayLabel, this.wednesdayTab, 
-        					 this.wednesdayCheck, "Wednesday", 3);
-        
-    }                                              
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void thursdayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        if(this.thursdayCheck.isSelected()) {
-            this.thursdayAddJob.setText("Add Job");
-            this.thursdayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.thursdayJobName.getText().isEmpty()) {
-                        Config.this.models[4].addElement(Config.this.thursdayJobName.getText());
-                        Config.this.thursdayJobList.setModel(Config.this.models[4]);
-                        Config.this.thursdayJobName.setText("");
-                    }
-                }
-            });
-
-            this.thursdayDeleteJob.setText("Delete Job");
-            this.thursdayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.thursdayJobList.isSelectionEmpty()) {
-                        int n = Config.this.thursdayJobList.getSelectedIndex();
-                        Config.this.models[4].remove(n);
-                    }
-                    
-                }
-            });
-        }
-        
-        // SWAP 1, TEAM 5
-        // QUALITY CHANGES
-        // This method (thursdayCheckActionPerformed) was very long, and so a large 
-        // portion of the code was extracted into the checkActionPerformed method. 
-        // As such, I've deleted the duplicated code and instead called the method
-        // with the appropriate parameters. You can see above the actionlisteners,
-        // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.thursdayScrollPane, this.thursdayAddJob, this.thursdayDeleteJob, 
-        					 this.thursdayJobList, this.thursdayJobName, this.thursdayLabel, this.thursdayTab, 
-        					 this.thursdayCheck, "Thursday", 4);
-    }                                             
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void fridayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                            
-       if(this.fridayCheck.isSelected()) {
-    	   
-            this.fridayAddJob.setText("Add Job");
-            this.fridayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.fridayJobName.getText().isEmpty()) {
-                        Config.this.models[5].addElement(Config.this.fridayJobName.getText());
-                        Config.this.fridayJobList.setModel(Config.this.models[5]);
-                        Config.this.fridayJobName.setText("");
-                    }
-                }
-            });
-
-            this.fridayDeleteJob.setText("Delete Job");
-            this.fridayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.fridayJobList.isSelectionEmpty()) {
-                        int n = Config.this.fridayJobList.getSelectedIndex();
-                        Config.this.models[5].remove(n);
-                    }
-                    
-                }
-            });
-        }
-       
-       // SWAP 1, TEAM 5
-       // QUALITY CHANGES
-       // This method (fridayCheckActionPerformed) was very long, and so a large 
-       // portion of the code was extracted into the checkActionPerformed method. 
-       // As such, I've deleted the duplicated code and instead called the method
-       // with the appropriate parameters. You can see above the actionlisteners,
-       // which needed to stay, as they aren't handled in the method.
-       	checkActionPerformed(evt, this.fridayScrollPane, this.fridayAddJob, this.fridayDeleteJob, 
-       			             this.fridayJobList, this.fridayJobName, this.fridayLabel, this.fridayTab, 
-       					     this.fridayCheck, "Friday", 5);
-        
-    }                                           
-
-    /**
-	 * @param evt  
-	 */
-    @SuppressWarnings("unchecked")
-	private void saturdayCheckActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        if(this.saturdayCheck.isSelected()) {
-            this.saturdayAddJob.setText("Add Job");
-            this.saturdayAddJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    if(!Config.this.saturdayJobName.getText().isEmpty()) {
-                        Config.this.models[6].addElement(Config.this.saturdayJobName.getText());
-                        Config.this.saturdayJobList.setModel(Config.this.models[6]);
-                        Config.this.saturdayJobName.setText("");
-                    }
-                }
-            });
-
-            this.saturdayDeleteJob.setText("Delete Job");
-            this.saturdayDeleteJob.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    while(!Config.this.saturdayJobList.isSelectionEmpty()) {
-                        int n = Config.this.saturdayJobList.getSelectedIndex();
-                        Config.this.models[6].remove(n);
-                    }
-                    
-                }
-            });
-        }
-        
-        // SWAP 1, TEAM 5
-        // QUALITY CHANGES
-        // This method (saturdayCheckActionPerformed) was very long, and so a large 
-        // portion of the code was extracted into the checkActionPerformed method. 
-        // As such, I've deleted the duplicated code and instead called the method
-        // with the appropriate parameters. You can see above the actionlisteners,
-        // which needed to stay, as they aren't handled in the method.
-        checkActionPerformed(evt, this.saturdayScrollPane, this.saturdayAddJob, this.saturdayDeleteJob, 
-        					 this.saturdayJobList, this.saturdayJobName, this.saturdayLabel, this.saturdayTab, 
-        					 this.saturdayCheck, "Saturday", 6);
-    }                                             
+    	checkActionPerformed(evt, this.daysScrollPane.get(dayName), this.daysAdd.get(dayName), this.daysDelete.get(dayName), 
+				 this.daysList.get(dayName), this.daysTextField.get(dayName), this.daysLabel.get(dayName), this.daysPanelTab.get(dayName), 
+				 this.daysChecked.get(dayName), dayName, this.getDayNum(dayName));
+    }
+    
+    /*
+     * SWAP 2, TEAM 6
+     * 
+     * extracted some functionality thrown into checks for specific days so it could be utilized
+     * for all days, treating them all the same.
+     * 
+     * 
+     */
+    public void addJob(String dayName){
+    	 if(!this.daysTextField.get(dayName).getText().isEmpty()) {
+             this.models[this.getDayNum(dayName)].addElement(this.daysTextField.get(dayName).getText());
+             this.daysList.get(dayName).setModel(Config.this.models[this.getDayNum(dayName)]);
+             this.daysTextField.get(dayName).setText("");
+         }
+    }
+    
+    public void deleteJob(String dayName){
+    	 while(!this.daysList.get(dayName).isSelectionEmpty()) {
+             int n = this.daysList.get(dayName).getSelectedIndex();
+             this.models[this.getDayNum(dayName)].remove(n);
+         }
+    }
+    
+    
+    
 
     // SWAP 1, TEAM 5
     // QUALITY CHANGES
@@ -758,36 +451,43 @@ public class Config extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {
     	ArrayList<Day> days = new ArrayList<Day>();
     	
+    	/*
+    	 * SWAP 2, TEAM 6
+    	 * 
+    	 * Changed the if statement to utilize the new hashmap variables rather than the previous ones
+    	 * 
+    	 */
+    	
     	// SWAP 1, TEAM 5
     	// QUALITY CHANGES
     	// Each of the innards of these if statements have been changed
     	// to use the addDayToList method to create the new days
     	// arrayList, getting rid of the duplicate code.
-    	if(this.sundayCheck.isSelected())
+    	if(this.daysChecked.get("Sunday").isSelected())
         {
     		days = addDayToList(days, "Sunday", 0);
         }
-    	if(this.mondayCheck.isSelected())
+    	if(this.daysChecked.get("Monday").isSelected())
         {
     		days = addDayToList(days, "Monday", 1);
         }
-    	if(this.tuesdayCheck.isSelected())
+    	if(this.daysChecked.get("Tuesday").isSelected())
         {
     		days = addDayToList(days, "Tuesday", 2);
         }
-    	if(this.wednesdayCheck.isSelected())
+    	if(this.daysChecked.get("Wednesday").isSelected())
         {
     		days = addDayToList(days, "Wednesday", 3);
         }
-    	if(this.thursdayCheck.isSelected())
+    	if(this.daysChecked.get("Thursday").isSelected())
         {
     		days = addDayToList(days, "Thursday", 4);
         }
-    	if(this.fridayCheck.isSelected())
+    	if(this.daysChecked.get("Friday").isSelected())
         {
     		days = addDayToList(days, "Friday", 5);
         }
-    	if(this.saturdayCheck.isSelected())
+    	if(this.daysChecked.get("Saturday").isSelected())
         {
     		days = addDayToList(days, "Saturday", 6);
         }
@@ -875,79 +575,20 @@ public class Config extends javax.swing.JFrame {
         });
     }
     
-    private javax.swing.JScrollPane sundayScrollPane;
-    private javax.swing.JButton sundayAddJob;
-    private javax.swing.JButton sundayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList sundayJobList;
-    private javax.swing.JTextField sundayJobName;
-    private javax.swing.JLabel sundayLabel;
-    private javax.swing.JPanel sundayTab;
     
-    private javax.swing.JScrollPane mondayScrollPane;
-    private javax.swing.JButton mondayAddJob;
-    private javax.swing.JButton mondayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList mondayJobList;
-    private javax.swing.JTextField mondayJobName;
-    private javax.swing.JLabel mondayLabel;
-    private javax.swing.JPanel mondayTab;
-    
-    private javax.swing.JScrollPane tuesdayScrollPane;
-    private javax.swing.JButton tuesdayAddJob;
-    private javax.swing.JButton tuesdayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList tuesdayJobList;
-    private javax.swing.JTextField tuesdayJobName;
-    private javax.swing.JLabel tuesdayLabel;
-    private javax.swing.JPanel tuesdayTab;
-    
-    private javax.swing.JScrollPane wednesdayScrollPane;
-    private javax.swing.JButton wednesdayAddJob;
-    private javax.swing.JButton wednesdayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList wednesdayJobList;
-    private javax.swing.JTextField wednesdayJobName;
-    private javax.swing.JLabel wednesdayLabel;
-    private javax.swing.JPanel wednesdayTab;
-    
-    private javax.swing.JScrollPane thursdayScrollPane;
-    private javax.swing.JButton thursdayAddJob;
-    private javax.swing.JButton thursdayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList thursdayJobList;
-    private javax.swing.JTextField thursdayJobName;
-    private javax.swing.JLabel thursdayLabel;
-    private javax.swing.JPanel thursdayTab;
-    
-    private javax.swing.JScrollPane fridayScrollPane;
-    private javax.swing.JButton fridayAddJob;
-    private javax.swing.JButton fridayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList fridayJobList;
-    private javax.swing.JTextField fridayJobName;
-    private javax.swing.JLabel fridayLabel;
-    private javax.swing.JPanel fridayTab;
-    
-    private javax.swing.JScrollPane saturdayScrollPane;
-    private javax.swing.JButton saturdayAddJob;
-    private javax.swing.JButton saturdayDeleteJob;
-    @SuppressWarnings("rawtypes")
-	private javax.swing.JList saturdayJobList;
-    private javax.swing.JTextField saturdayJobName;
-    private javax.swing.JLabel saturdayLabel;
-    private javax.swing.JPanel saturdayTab;
+    /*
+     * SWAP 2, TEAM 6
+     * 
+     * Were able to remove many duplicate and redundant initializations from the bottom of this file
+     * by creating a HashMap with everything each day has specific to itself.  Using this new route, we
+     * can use for loops to initialize these variables, and make the process more efficient.
+     * 
+     * 
+     */
     
     private javax.swing.JTabbedPane dayTabs;
-    private javax.swing.JCheckBox fridayCheck;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JCheckBox mondayCheck;
-    private javax.swing.JButton nextButton;
-    private javax.swing.JCheckBox saturdayCheck;
-    private javax.swing.JCheckBox sundayCheck;
-    private javax.swing.JCheckBox thursdayCheck;
-    private javax.swing.JCheckBox tuesdayCheck;
-    private javax.swing.JCheckBox wednesdayCheck;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JPanel jPanel1;
+	private javax.swing.JButton nextButton;
     private javax.swing.JCheckBox repeatCheck;
 }
