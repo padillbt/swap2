@@ -351,10 +351,19 @@ public class CalendarGUI extends javax.swing.JFrame {
 		}
 		return null;
 	}
-
+	
 	//SMELL: Long method - weighing in at 203 lines, initComponents is the
 	// longest method in the project. This can likely be extracted into several
 	// smaller functions to increase clarity.
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL  
+	//First Step: We used the Extract Method
+	//Second Step: Additional components could be added to the GUI by creating a new method and then calling it form 
+	//initComponents(). Also it is simpler to add additional options in each drop down menu. A feature that could be added
+	// is internationalization by passing a Locale to each function.
+	//Third Step: The refactoring was a success because each newly created method performs a single task and the name clearly
+	// explains its functionality. This allows an overall increase in clarity.
+	
 	private void initComponents() {
 
 		this.monthTitle = new javax.swing.JLabel();
@@ -374,9 +383,23 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.genHtml = new javax.swing.JMenuItem();
 		this.generateText = new javax.swing.JMenuItem();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Calendar");
+		this.prepareMonth();
 
+		this.prepareScheduleTable();
+
+		this.prepareFileDropDownMenu();
+
+		this.prepareEditDropDownMenu();
+		
+		this.prepareGenerateDropDownMenu();
+
+		this.prepareLayout();
+		
+		this.prepareFrame();
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
+	private void prepareMonth(){
 		this.monthTitle.setFont(new java.awt.Font("Tahoma", 1, 24));
 		this.monthTitle.setText("Month Name Here");
 
@@ -397,7 +420,10 @@ public class CalendarGUI extends javax.swing.JFrame {
 						nextMonthActionPerformed(evt);
 					}
 				});
-
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.
+	private void prepareScheduleTable(){
 		this.scheduleTable.setModel(new javax.swing.table.DefaultTableModel(
 				new Object[][] { { null, null, null }, { null, null, null },
 						{ null, null, null }, { null, null, null } },
@@ -419,7 +445,10 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.scheduleTable.setComponentPopupMenu(this.popup);
 		
 		this.jScrollPane1.setViewportView(this.scheduleTable);
-
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
+	private void prepareFileDropDownMenu(){
 		this.fileMenu.setText("File");
 
 		this.saveChanges.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -447,7 +476,10 @@ public class CalendarGUI extends javax.swing.JFrame {
 		//this.fileMenu.add(this.undoChanges);
 
 		this.menuBar.add(this.fileMenu);
-
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
+	private void prepareEditDropDownMenu(){
 		this.editMenu.setText("Edit");
 
 		this.editWorkers.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -476,6 +508,10 @@ public class CalendarGUI extends javax.swing.JFrame {
 
 		this.menuBar.add(this.editMenu);
 
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
+	private void prepareGenerateDropDownMenu(){
 		this.generateMenu.setText("Generate");
 
 		this.genHtml.setAccelerator(javax.swing.KeyStroke.getKeyStroke(
@@ -504,9 +540,10 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.generateMenu.add(this.generateText);
 
 		this.menuBar.add(this.generateMenu);
-
-		setJMenuBar(this.menuBar);
-
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
+	public void prepareLayout(){
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
 				getContentPane());
 		getContentPane().setLayout(layout);
@@ -556,6 +593,15 @@ public class CalendarGUI extends javax.swing.JFrame {
 										javax.swing.GroupLayout.PREFERRED_SIZE,
 										265,
 										javax.swing.GroupLayout.PREFERRED_SIZE)));
+	}
+	
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL  
+	private void prepareFrame(){
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		
+		setTitle("Calendar");
+		
+		setJMenuBar(this.menuBar);
 
 		pack();
 	}
