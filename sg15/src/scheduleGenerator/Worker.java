@@ -78,7 +78,10 @@ public class Worker implements Serializable {
 	 * @return number of times job has been worked.
 	 */
 	public int numWorkedForJob(String jobName) {
-		return this.timesWorked.get(jobName);
+		if (this.timesWorked.containsKey(jobName)) {
+			return this.timesWorked.get(jobName);
+		}
+		return -1;
 	}
 
 	// SWAP 1, TEAM 5
@@ -97,32 +100,40 @@ public class Worker implements Serializable {
 	/**
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR DATA CLASS SMELL.
+	 * REFACTORING FOR BAD SMELL - DATA CLASS.
 	 * 
-	 * This method will go through all the logic of figuring out if a worker
-	 * should work a job or not based on their preferences. This puts the
-	 * responsibility of job assignment logic in the worker. This removes
-	 * excessive logic from the Schedule class and puts more functionality into
-	 * this class.
+	 * This was done using the Move Method fix by Fowler. This logic was
+	 * originally in Schedule, but uses a lot of Worker's features. Therefore,
+	 * some of the logic should moved here.
+	 * 
+	 * addJob() and canAddJob() were added. They go through all the logic of
+	 * figuring out if a worker should work a job or not based on their
+	 * preferences and constraints. This puts the responsibility of job
+	 * assignment logic in the worker. This removes excessive logic from the
+	 * Schedule class and puts more functionality into this class.
 	 * 
 	 * The benefits of this refactor mean that more criteria could be added for
 	 * job assignments. They would only need to be added to this method and no
 	 * others.
 	 * 
-	 * 
+	 * This refactor was very successful because it provides an easy why to
+	 * expand on worker constraints when assigning jobs.
 	 */
 	public boolean addJob(String jobName) {
-
-		boolean addJobSuccessful = this.willingToWork.containsKey(jobName);
-		if (addJobSuccessful) {
-			addJobSuccessful = this.willingToWork.get(jobName) > this.timesWorked
-					.get(jobName);
-		}
-		if (addJobSuccessful) {
+		boolean possible = canAddJob(jobName);
+		if (possible) {
 			addWorkedJob(jobName);
 		}
+		return possible;
+	}
 
-		return addJobSuccessful;
+	public boolean canAddJob(String jobName) {
+		boolean possible = this.willingToWork.containsKey(jobName);
+		if (possible) {
+			possible = this.willingToWork.get(jobName) > this.timesWorked
+					.get(jobName);
+		}
+		return possible;
 	}
 
 	/**
