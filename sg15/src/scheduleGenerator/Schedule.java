@@ -104,7 +104,7 @@ public class Schedule extends Thread implements Serializable {
 	/*
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR BAD SMELL - DATA CLASS
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS
 	 * 
 	 * This code is no longer needed because the refactor no longer requires it.
 	 */
@@ -198,7 +198,7 @@ public class Schedule extends Thread implements Serializable {
 	/*
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR BAD SMELL - DATA CLASS
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS
 	 * 
 	 * This code is no longer needed because the refactor no longer requires it.
 	 */
@@ -298,7 +298,9 @@ public class Schedule extends Thread implements Serializable {
 					numOfJobs.add(jobsInOrder.size());
 
 					/*
-					 * SWAP 2, TEAM 6 REFACTORING FOR BAD SMELL - DATA CLASS.
+					 * SWAP 2, TEAM 6 
+					 * 
+					 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
 					 */
 					for (String job : jobsInOrder) {
 						boolean jobAssignedSuccessfully = this
@@ -314,7 +316,7 @@ public class Schedule extends Thread implements Serializable {
 					/*
 					 * SWAP 2, TEAM 6
 					 * 
-					 * REFACTORING FOR BAD SMELL - DATA CLASS
+					 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS
 					 * 
 					 * This code is no longer needed because the refactor no
 					 * longer requires it.
@@ -374,7 +376,7 @@ public class Schedule extends Thread implements Serializable {
 	/**
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR SMELL DATA CLASS IN WORKER.
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS IN WORKER.
 	 * 
 	 * To make Worker more than a data class, responsibility of job assignments
 	 * is being moved to that class. therefore, the method calculateNextMonth()
@@ -423,7 +425,7 @@ public class Schedule extends Thread implements Serializable {
 	/**
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR BAD SMELL - DATA CLASS.
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
 	 * 
 	 * To make Worker more than a data class, responsibility of job assignments
 	 * is being moved to that class. therefore, the method calculateNextMonth()
@@ -453,7 +455,7 @@ public class Schedule extends Thread implements Serializable {
 	/**
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR BAD SMELL - DATA CLASS.
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
 	 * 
 	 * To make Worker more than a data class, responsibility of job assignments
 	 * is being moved to that class. therefore, the method calculateNextMonth()

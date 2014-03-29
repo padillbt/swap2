@@ -100,7 +100,7 @@ public class Worker implements Serializable {
 	/**
 	 * SWAP 2, TEAM 6
 	 * 
-	 * REFACTORING FOR BAD SMELL - DATA CLASS.
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
 	 * 
 	 * This was done using the Move Method fix by Fowler. This logic was
 	 * originally in Schedule, but uses a lot of Worker's features. Therefore,
