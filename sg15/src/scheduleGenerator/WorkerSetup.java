@@ -113,7 +113,7 @@ public class WorkerSetup extends javax.swing.JFrame {
 			tempDayJobPane.setViewportView(tempPanel);
 
 			// Label the Pane
-			JLabel jobLabel = new JLabel("Preferred Jobs:");
+			JLabel jobLabel = new JLabel("Preferred Jobs:    # of days (optional):");
 
 			// Create a tab Panel for the Worker Tab and add the inputs.
 
@@ -413,7 +413,14 @@ public class WorkerSetup extends javax.swing.JFrame {
 						jobNames.add(((JCheckBox) job).getText());
 						String contents = ((JTextField) amount).getText();
 						if (!contents.equals("")) {
-							jobAmounts.put(((JCheckBox) job).getText(), Integer.parseInt(contents));
+							int number =  Integer.parseInt(contents);
+							if (number < 0){
+								JOptionPane.showMessageDialog(this,
+										"Cannot request negative days to work.");
+								allGood = false;
+								return;
+							}
+							jobAmounts.put(((JCheckBox) job).getText(),number);
 						} else {
 							jobAmounts.put(((JCheckBox) job).getText(), Integer.MAX_VALUE);
 						}

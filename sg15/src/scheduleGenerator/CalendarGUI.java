@@ -356,6 +356,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 	// longest method in the project. This can likely be extracted into several
 	// smaller functions to increase clarity.
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL  
 	//First Step: We used the Extract Method
 	//Second Step: Additional components could be added to the GUI by creating a new method and then calling it form 
@@ -398,6 +399,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.prepareFrame();
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
 	private void prepareMonth(){
 		this.monthTitle.setFont(new java.awt.Font("Tahoma", 1, 24));
@@ -422,6 +424,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 				});
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.
 	private void prepareScheduleTable(){
 		this.scheduleTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -447,6 +450,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.jScrollPane1.setViewportView(this.scheduleTable);
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
 	private void prepareFileDropDownMenu(){
 		this.fileMenu.setText("File");
@@ -478,6 +482,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.menuBar.add(this.fileMenu);
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
 	private void prepareEditDropDownMenu(){
 		this.editMenu.setText("Edit");
@@ -510,6 +515,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
 	private void prepareGenerateDropDownMenu(){
 		this.generateMenu.setText("Generate");
@@ -542,6 +548,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 		this.menuBar.add(this.generateMenu);
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL.  
 	public void prepareLayout(){
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
@@ -595,6 +602,7 @@ public class CalendarGUI extends javax.swing.JFrame {
 										javax.swing.GroupLayout.PREFERRED_SIZE)));
 	}
 	
+	// SWAP 2, TEAM 6 
 	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL  
 	private void prepareFrame(){
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
