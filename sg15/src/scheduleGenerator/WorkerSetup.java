@@ -415,7 +415,7 @@ public class WorkerSetup extends javax.swing.JFrame {
 						if (!contents.equals("")) {
 							jobAmounts.put(((JCheckBox) job).getText(), Integer.parseInt(contents));
 						} else {
-							jobAmounts.put(((JCheckBox) job).getText(), -1);
+							jobAmounts.put(((JCheckBox) job).getText(), Integer.MAX_VALUE);
 						}
 					}
 				}
