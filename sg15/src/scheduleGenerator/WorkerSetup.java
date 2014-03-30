@@ -448,10 +448,12 @@ public class WorkerSetup extends javax.swing.JFrame {
 						} else {
 							if (!jobAmounts.containsKey(((JCheckBox) job)
 									.getText())) {
-								if (jobAmounts.get(((JCheckBox) job).getText()) != Integer.MAX_VALUE) {
-									jobAmounts.put(((JCheckBox) job).getText(),
-											Integer.MAX_VALUE);
-								}
+								jobAmounts.put(((JCheckBox) job).getText(),
+										Integer.MAX_VALUE);
+							} else if (jobAmounts.get(((JCheckBox) job)
+									.getText()) != Integer.MAX_VALUE) {
+								jobAmounts.put(((JCheckBox) job).getText(),
+										Integer.MAX_VALUE);
 							}
 						}
 					}
