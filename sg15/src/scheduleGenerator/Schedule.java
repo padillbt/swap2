@@ -184,10 +184,21 @@ public class Schedule extends Thread implements Serializable {
 	// delete the job because no one can handle it.
 	// NOTE: This functionality was bugged out before any changes were made.
 	// This refactor didn't break anything.
-	public void handleNoWorker(TreeMap<String, Worker> jobsWithWorker,
-			String job, Day day) {
-		jobsWithWorker.put(job, new Worker("Empty", new ArrayList<Day>(),
-				new HashMap<String, Integer>()));
+	public void handleNoWorker(String job, Day day) {
+
+		/*
+		 * SWAP 2, TEAM 6
+		 * 
+		 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
+		 * 
+		 * The parameter list could be shortened here because the TreeMap is now
+		 * a part of day.
+		 */
+
+		day.getJobAssignments().put(
+				job,
+				new Worker("Empty", new ArrayList<Day>(),
+						new HashMap<String, Integer>()));
 		JOptionPane.showMessageDialog(
 				new JFrame(),
 				"No workers are able to work as a(n) " + job + " on "
@@ -286,7 +297,13 @@ public class Schedule extends Thread implements Serializable {
 				if (this.cal.get(Calendar.DAY_OF_WEEK) == this.numForName(day
 						.getNameOfDay())) {
 
-					TreeMap<String, Worker> jobsWithWorker = new TreeMap<String, Worker>();
+					/*
+					 * SWAP 2, TEAM 6
+					 * 
+					 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
+					 */
+					// TreeMap<String, Worker> jobsWithWorker = new
+					// TreeMap<String, Worker>();
 					// ArrayList<Worker> workersWorking = new
 					// ArrayList<Worker>();
 
@@ -298,19 +315,18 @@ public class Schedule extends Thread implements Serializable {
 					numOfJobs.add(jobsInOrder.size());
 
 					/*
-					 * SWAP 2, TEAM 6 
+					 * SWAP 2, TEAM 6
 					 * 
-					 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
+					 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS
 					 */
 					for (String job : jobsInOrder) {
 						boolean jobAssignedSuccessfully = this
-								.assignWorkerToJob(job, jobsWithWorker);
+								.assignWorkerToJob(job, day);
 
 						if (!jobAssignedSuccessfully) {
-							handleNoWorker(jobsWithWorker, job, day);
+							handleNoWorker(job, day);
 							break;
 						}
-
 					}
 
 					/*
@@ -356,7 +372,7 @@ public class Schedule extends Thread implements Serializable {
 							+ "/"
 							+ String.format("%02d",
 									this.cal.get(Calendar.DAY_OF_MONTH));
-					this.schedule.put(date, jobsWithWorker);
+					this.schedule.put(date, day.getJobAssignments());
 					break; // Breaks so it doesn't check the other days
 				}
 			}
@@ -383,15 +399,14 @@ public class Schedule extends Thread implements Serializable {
 	 * needs to change to handle moved responsibility. So this helper method was
 	 * created.
 	 */
-	private boolean assignWorkerToJob(String jobName,
-			TreeMap<String, Worker> jobsWithWorker) {
+	private boolean assignWorkerToJob(String jobName, Day day) {
 
 		if (!Main.config.noRepeats) {
-			return assignWorkerToJobRandomly(jobName, jobsWithWorker);
+			return assignWorkerToJobRandomly(jobName, day);
 		}
 
 		// This part is a refactor of Swap 1's bonus feature.
-		if (this.freeWorkers == null) {
+		if (this.freeWorkers == null || this.freeWorkers.isEmpty()) {
 			this.freeWorkers = new ArrayList<Worker>();
 			for (Worker w : this.workers) {
 				this.freeWorkers.add(w);
@@ -399,27 +414,47 @@ public class Schedule extends Thread implements Serializable {
 			this.assignedWorkers = new ArrayList<Worker>();
 		}
 
+		boolean addSuccessful = false;
 		Worker leastWorked = findLeastWorked(this.freeWorkers, jobName);
 
 		if (leastWorked != null) {
-			jobsWithWorker.put(jobName, leastWorked);
-			this.assignedWorkers.add(leastWorked);
-			this.freeWorkers.remove(leastWorked);
-			if (this.freeWorkers.isEmpty()) {
-				this.freeWorkers = this.assignedWorkers;
-				this.assignedWorkers = new ArrayList<Worker>();
+			addSuccessful = leastWorked.addJob(jobName);
+			if (addSuccessful) {
+				day.getJobAssignments().put(jobName, leastWorked);
+				this.assignedWorkers.add(leastWorked);
+				this.freeWorkers.remove(leastWorked);
+				if (this.freeWorkers.isEmpty()) {
+					this.freeWorkers = this.assignedWorkers;
+					this.assignedWorkers = new ArrayList<Worker>();
+				}
 			}
-			return leastWorked.addJob(jobName);
+			// day.getJobAssignments().put(jobName, leastWorked);
+			// this.assignedWorkers.add(leastWorked);
+			// this.freeWorkers.remove(leastWorked);
+			// if (this.freeWorkers.isEmpty()) {
+			// this.freeWorkers = this.assignedWorkers;
+			// this.assignedWorkers = new ArrayList<Worker>();
+			// }
+			// return leastWorked.addJob(jobName);
 		}
 
-		leastWorked = findLeastWorked(this.assignedWorkers, jobName);
-
-		if (leastWorked != null) {
-			jobsWithWorker.put(jobName, leastWorked);
-			return leastWorked.addJob(jobName);
+		if (!addSuccessful) {
+			leastWorked = findLeastWorked(this.assignedWorkers, jobName);
+			if (leastWorked != null) {
+				addSuccessful = leastWorked.addJob(jobName);
+				if (addSuccessful) {
+					day.getJobAssignments().put(jobName, leastWorked);
+					return leastWorked.addJob(jobName);
+				}
+			}
+			// if (leastWorked != null) {
+			// day.getJobAssignments().put(jobName, leastWorked);
+			// return leastWorked.addJob(jobName);
+			// }
 		}
+		// return assignWorkerToJobRandomly(jobName, day);
 
-		return false;
+		return addSuccessful;
 	}
 
 	/**
@@ -433,6 +468,10 @@ public class Schedule extends Thread implements Serializable {
 	 * created. This is a refactored version of swap 1's bonus feature.
 	 */
 	private Worker findLeastWorked(ArrayList<Worker> workerList, String jobName) {
+
+		if (workerList.isEmpty()) {
+			return null;
+		}
 
 		Worker leastWorked = workerList.get(0);
 
@@ -462,8 +501,7 @@ public class Schedule extends Thread implements Serializable {
 	 * needs to change to handle moved responsibility. So this helper method was
 	 * created.
 	 */
-	private boolean assignWorkerToJobRandomly(String jobName,
-			TreeMap<String, Worker> jobsWithWorker) {
+	private boolean assignWorkerToJobRandomly(String jobName, Day day) {
 		ArrayList<Worker> workerList = new ArrayList<Worker>();
 		for (Worker w : this.workers) {
 			workerList.add(w);
@@ -476,7 +514,7 @@ public class Schedule extends Thread implements Serializable {
 					.nextInt(workerList.size()));
 			addSuccessful = randomWorker.addJob(jobName);
 			if (addSuccessful) {
-				jobsWithWorker.put(jobName, randomWorker);
+				day.getJobAssignments().put(jobName, randomWorker);
 				break;
 			} else {
 				workerList.remove(randomWorker);

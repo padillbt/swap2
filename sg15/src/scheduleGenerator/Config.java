@@ -29,16 +29,32 @@ import javax.swing.JTextField;
 
 /* SWAP 2, TEAM 6
 * 
-* REFACTOR
-* SMELL: Large Class
+* REFACTORING FOR ENHANCEMENT FROM BAD SMELL : Large Class
+* 
+* 
+* Used Parameterize Method to create a single function for the treatment of all days.
+* 
+* Any smaller features that must be implemented across each day is now easier, as you only have to implement the change
+* once in the code and never again.  An example would be a feature that differentiates between jobs and meetings, both needing
+* to be added to the days in the config.  This change could be done once in the method for setting up a day, and it could effect
+* all of the days rather than having to copy and paste the code and change it for each day.
 * 
 * Removed all the duplication of methods mentioned that was causing the class to be so large.  Furthermore, all of the fields
 * were updated into just a few HashMaps containing values by keys determined by each day's name.  Removal of such unneeded
 * duplication has made the class much smaller than it was before.
 * 
 * 
+* 
 */
 
+
+	//SWAP 2, TEAM 6 
+	// REFACTORING FOR ENHANCEMENT FROM BAD SMELL   : Divergent Change
+	//First Step: We used the Extract Class
+	//Second Step: Whenever the action is required to be change rather than changing the Config class, you would change 
+	// the NextButtonListener class. Additionaly whenever a new Action is required a new class would be created rather than
+	// adding functionality to Config.java
+	//Third Step: The refactoring was a success because there are now less reasons to modify Config.java
 
 //SMELL: Large Class - Config is much larger than other classes in the project,
 // mostly due to massive amounts of code duplication. There are also an enormous
@@ -63,7 +79,7 @@ public class Config extends javax.swing.JFrame {
     
     
     // SWAP 2, TEAM 6
-    private HashMap<String, JCheckBox> daysChecked = new HashMap<String, JCheckBox>();
+    HashMap<String, JCheckBox> daysChecked = new HashMap<String, JCheckBox>();
 	private HashMap<String, JList> daysList = new HashMap<String, JList>();
 	private HashMap<String, JScrollPane> daysScrollPane = new HashMap<String, JScrollPane>();
 	private HashMap<String, JTextField> daysTextField = new HashMap<String, JTextField>();
@@ -110,8 +126,14 @@ public class Config extends javax.swing.JFrame {
         
      /* SWAP 2, TEAM 6
    	 * 
-   	 * REFACTOR
-   	 * SMELL: Switch Statements
+   	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL : Switch Statements
+   	 * 
+   	 * Used Parameterize Method to create a single function for the treatment of all days.
+   	 * 
+   	 * Any smaller features that must be implemented across each day is now easier, as you only have to implement the change
+   	 * once in the code and never again.  An example would be a feature that differentiates between jobs and meetings, both needing
+   	 * to be added to the days in the config.  This change could be done once in the method for setting up a day, and it could effect
+   	 * all of the days rather than having to copy and paste the code and change it for each day.
    	 * 
    	 * Removed all the duplications in the switch statement based on days mentioned below into a for loop so that 
    	 * changes only need to be made once.  This was done using the new updated HashMaping days to values
@@ -204,12 +226,7 @@ public class Config extends javax.swing.JFrame {
 
 
         this.nextButton.setText("Next");
-        this.nextButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
-            }
-        });
+        this.nextButton.addActionListener(new NextButtonListener(this));
 
         // SWAP 1, TEAM 5
         // BONUS FEATURE
@@ -286,8 +303,14 @@ public class Config extends javax.swing.JFrame {
     
     /* SWAP 2, TEAM 6
 	 * 
-	 * REFACTOR
-	 * SMELL: Duplicated code
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL : Duplicated code
+	 * 
+	 * Used Parameterize Method to create a single function for the treatment of all days.
+	 * 
+	 * Any smaller features that must be implemented across each day is now easier, as you only have to implement the change
+	 * once in the code and never again.  An example would be a feature that differentiates between jobs and meetings, both needing
+	 * to be added to the days in the config.  This change could be done once in the method for setting up a day, and it could effect
+	 * all of the days rather than having to copy and paste the code and change it for each day.
 	 * 
 	 * Removed all the duplication mentioned below into a single dayCheckActionPerformed function so that 
 	 * changes only need to be made once.  This was done using the new updated HashMaping days to values
@@ -444,76 +467,7 @@ public class Config extends javax.swing.JFrame {
             this.dayTabs.remove(tab);
         }
     }
-    
-    /**
-	 * @param evt  
-	 */
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	ArrayList<Day> days = new ArrayList<Day>();
-    	
-    	/*
-    	 * SWAP 2, TEAM 6
-    	 * 
-    	 * Changed the if statement to utilize the new hashmap variables rather than the previous ones
-    	 * 
-    	 */
-    	
-    	// SWAP 1, TEAM 5
-    	// QUALITY CHANGES
-    	// Each of the innards of these if statements have been changed
-    	// to use the addDayToList method to create the new days
-    	// arrayList, getting rid of the duplicate code.
-    	if(this.daysChecked.get("Sunday").isSelected())
-        {
-    		days = addDayToList(days, "Sunday", 0);
-        }
-    	if(this.daysChecked.get("Monday").isSelected())
-        {
-    		days = addDayToList(days, "Monday", 1);
-        }
-    	if(this.daysChecked.get("Tuesday").isSelected())
-        {
-    		days = addDayToList(days, "Tuesday", 2);
-        }
-    	if(this.daysChecked.get("Wednesday").isSelected())
-        {
-    		days = addDayToList(days, "Wednesday", 3);
-        }
-    	if(this.daysChecked.get("Thursday").isSelected())
-        {
-    		days = addDayToList(days, "Thursday", 4);
-        }
-    	if(this.daysChecked.get("Friday").isSelected())
-        {
-    		days = addDayToList(days, "Friday", 5);
-        }
-    	if(this.daysChecked.get("Saturday").isSelected())
-        {
-    		days = addDayToList(days, "Saturday", 6);
-        }
-    	if(days.size() > 0) {
-    		boolean hasJobs = true;
-    		int i = 0;
-    		while(hasJobs && i<days.size()) {
-    			if(days.get(i).getJobs().size() == 0) {
-    				hasJobs = false;
-    			}
-    			i++;
-    		}
-    		if(hasJobs) {
-		    	Main.setDays(days);
-		    	Main.wSet = new WorkerSetup();
-		    	Main.toggleWorkerSetup();
-		    	Main.config = this;
-		    	Main.toggleConfig();
-    		} else {
-    			JOptionPane.showMessageDialog(this, "You must have at least one job each day.");
-    		}
-    	} else {
-    		JOptionPane.showMessageDialog(this, "You have not added any days.");
-    	}
-    }
-    
+ 
     // SWAP 1, TEAM 5
     // QUALITY CHANGES
     // I extracted duplicate code into this method. The code that was duplicated

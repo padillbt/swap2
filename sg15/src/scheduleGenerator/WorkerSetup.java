@@ -17,8 +17,10 @@ import javax.swing.*;
  * 
  * @author schneimd
  */
-//SMELL: Shotgun Surgery - this class as well as several others makes use of the idea
-// of jobs, however there is no class for such a concept. Instead, its functionality is
+// SMELL: Shotgun Surgery - this class as well as several others makes use of
+// the idea
+// of jobs, however there is no class for such a concept. Instead, its
+// functionality is
 // spread across many classes and changing it would require many different small
 // modifications.
 public class WorkerSetup extends javax.swing.JFrame {
@@ -56,9 +58,10 @@ public class WorkerSetup extends javax.swing.JFrame {
 						JPanel p = (JPanel) view.getComponent(0);
 
 						for (Component job : p.getComponents()) {
-							for (String workerJob : workers.get(c).getDays().get(n)
-									.getJobs()) {
-								if (((JCheckBox) job).getText().equals(workerJob)) {
+							for (String workerJob : workers.get(c).getDays()
+									.get(n).getJobs()) {
+								if (((JCheckBox) job).getText().equals(
+										workerJob)) {
 									((JCheckBox) job).setSelected(true);
 								}
 							}
@@ -90,10 +93,13 @@ public class WorkerSetup extends javax.swing.JFrame {
 		for (Day day : this.days) {
 			JCheckBox[] jobs = new JCheckBox[day.getJobs().size()];
 			// SWAP 1, TEAM 5
-	        // ADDITIONAL FEATURE
-	        // This change sets up the required GUI components for the additional feature. This feature will allow
-			// workers to specify how many days they want to work on a given job. The method here puts text fields
-			// next to the checkboxes for selecting jobs. If the text fields are left blank, the functionality is
+			// ADDITIONAL FEATURE
+			// This change sets up the required GUI components for the
+			// additional feature. This feature will allow
+			// workers to specify how many days they want to work on a given
+			// job. The method here puts text fields
+			// next to the checkboxes for selecting jobs. If the text fields are
+			// left blank, the functionality is
 			// the same as before the change.
 			JTextField[] jobDays = new JTextField[day.getJobs().size()];
 			for (int i = 0; i < day.getJobs().size(); i++) {
@@ -113,7 +119,15 @@ public class WorkerSetup extends javax.swing.JFrame {
 			tempDayJobPane.setViewportView(tempPanel);
 
 			// Label the Pane
-			JLabel jobLabel = new JLabel("Preferred Jobs:");
+			/*
+			 * SWAP 2, TEAM 6
+			 * 
+			 * FURTHER ELABORATION
+			 * 
+			 * Made use of text field more clear.
+			 */
+			JLabel jobLabel = new JLabel(
+					"Preferred Jobs:    # of days (optional):");
 
 			// Create a tab Panel for the Worker Tab and add the inputs.
 
@@ -390,8 +404,9 @@ public class WorkerSetup extends javax.swing.JFrame {
 			JTabbedPane daysPane = (JTabbedPane) tab.getComponents()[0];
 
 			// SWAP 1, TEAM 5
-	        // ADDITIONAL FEATURE
-	        // Here the method is reading input from the job checkboxes and text fields
+			// ADDITIONAL FEATURE
+			// Here the method is reading input from the job checkboxes and text
+			// fields
 			// and creating worker objects to represent this.
 			HashMap<String, Integer> jobAmounts = new HashMap<String, Integer>();
 			for (int i = 0; i < daysPane.getTabCount(); i++) {
@@ -413,9 +428,31 @@ public class WorkerSetup extends javax.swing.JFrame {
 						jobNames.add(((JCheckBox) job).getText());
 						String contents = ((JTextField) amount).getText();
 						if (!contents.equals("")) {
-							jobAmounts.put(((JCheckBox) job).getText(), Integer.parseInt(contents));
+							/*
+							 * SWAP 2, TEAM 6
+							 * 
+							 * FURTHER ELABORATION
+							 * 
+							 * Added error handling for preferred day feature so
+							 * people cannot request negative amounts of days
+							 */
+							int number = Integer.parseInt(contents);
+							if (number < 0) {
+								JOptionPane
+										.showMessageDialog(this,
+												"Cannot request negative days to work.");
+								allGood = false;
+								return;
+							}
+							jobAmounts.put(((JCheckBox) job).getText(), number);
 						} else {
-							jobAmounts.put(((JCheckBox) job).getText(), Integer.MAX_VALUE);
+							if (!jobAmounts.containsKey(((JCheckBox) job)
+									.getText())) {
+								if (jobAmounts.get(((JCheckBox) job).getText()) != Integer.MAX_VALUE) {
+									jobAmounts.put(((JCheckBox) job).getText(),
+											Integer.MAX_VALUE);
+								}
+							}
 						}
 					}
 				}

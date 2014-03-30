@@ -19,7 +19,7 @@ public class Day implements Serializable {
 	private String dayOfWeek;
 	// private ArrayList<String> jobs = new ArrayList<String>();
 
-	private TreeMap<String, Worker> jobsAndWorkers;
+	private TreeMap<String, Worker> jobAssignments = new TreeMap<String, Worker>();;
 
 	/*
 	 * SWAP 2, TEAM 6
@@ -66,7 +66,7 @@ public class Day implements Serializable {
 		 * 
 		 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
 		 */
-		this.jobsAndWorkers.put(jobName, null);
+		this.jobAssignments.put(jobName, null);
 		// this.jobs.add(jobName);
 	}
 
@@ -74,6 +74,15 @@ public class Day implements Serializable {
 	 * Set jobs to new jobs.
 	 * 
 	 * @param jobNames
+	 */
+
+	/**
+	 * SWAP 2, TEAM 6
+	 * 
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
+	 * 
+	 * This method is never used. If it is needed a new method will have to be
+	 * written because this does not use the TreeMap.
 	 */
 	// public void setJobs(ArrayList<String> jobNames) {
 	// //this.jobs = jobNames;
@@ -96,10 +105,19 @@ public class Day implements Serializable {
 		 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
 		 */
 		ArrayList<String> jobList = new ArrayList<String>();
-		for (String i : this.jobsAndWorkers.keySet()) {
+		for (String i : this.jobAssignments.keySet()) {
 			jobList.add(i);
 		}
 		return jobList;
+	}
+
+	/**
+	 * SWAP 2, TEAM 6
+	 * 
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - LAZY CLASS
+	 */
+	public TreeMap<String, Worker> getJobAssignments() {
+		return this.jobAssignments;
 	}
 
 	/**

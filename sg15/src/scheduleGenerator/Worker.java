@@ -116,7 +116,7 @@ public class Worker implements Serializable {
 	 * job assignments. They would only need to be added to this method and no
 	 * others.
 	 * 
-	 * This refactor was very successful because it provides an easy why to
+	 * This refactor was very successful because it provides an easy way to
 	 * expand on worker constraints when assigning jobs.
 	 */
 	public boolean addJob(String jobName) {
@@ -127,6 +127,11 @@ public class Worker implements Serializable {
 		return possible;
 	}
 
+	/**
+	 * SWAP 2, TEAM 6
+	 * 
+	 * REFACTORING FOR ENHANCEMENT FROM BAD SMELL - DATA CLASS.
+	 */
 	public boolean canAddJob(String jobName) {
 		boolean possible = this.willingToWork.containsKey(jobName);
 		if (possible) {
